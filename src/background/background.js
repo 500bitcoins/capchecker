@@ -218,6 +218,8 @@ async function quickCheck(post, heuristic) {
 // Optional extra context from the public fxtwitter API: author details, the
 // full text of X Articles (the timeline only shows a card), and the author's
 // own follow-up posts. Hype posts often put the link "below" in a self-reply.
+// An article can be in the post itself, in the post it quotes, or in one of the
+// author's follow-ups; the model can't open x.com links itself (X needs a login).
 async function fxJson(url) {
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), 10000);
@@ -229,6 +231,18 @@ async function fxJson(url) {
   } finally {
     clearTimeout(timer);
   }
+}
+
+function articleOf(a, max) {
+  if (!a) return null;
+  const blocks = (a.content && a.content.blocks) || [];
+  const ents = a.content && a.content.entityMap;
+  const list = Array.isArray(ents) ? ents : Object.values(ents || {});
+  return {
+    title: a.title,
+    text: blocks.map((b) => b.text).filter((x) => x && x.trim()).join('\n').slice(0, max),
+    links: [...new Set(list.map((e) => (e.value || e).data && (e.value || e).data.url).filter(Boolean))].slice(0, 20),
+  };
 }
 
 async function enrich(post) {
@@ -251,20 +265,25 @@ async function enrich(post) {
     out.full_text = t.text;
     out.views = t.views;
     if (t.community_note) out.community_note = t.community_note.text || true;
-    if (t.article) {
-      const blocks = (t.article.content && t.article.content.blocks) || [];
-      out.article_title = t.article.title;
-      out.article_text = blocks.map((b) => b.text).filter((x) => x && x.trim()).join('\n').slice(0, 8000);
-      const ents = t.article.content && t.article.content.entityMap;
-      const list = Array.isArray(ents) ? ents : Object.values(ents || {});
-      out.article_links = [...new Set(list.map((e) => (e.value || e).data && (e.value || e).data.url).filter(Boolean))].slice(0, 20);
+    const art = articleOf(t.article, 8000);
+    if (art) {
+      out.article_title = art.title;
+      out.article_text = art.text;
+      out.article_links = art.links;
     }
-    if (t.quote) out.quoted_full_text = t.quote.text;
+    if (t.quote) {
+      out.quoted_full_text = t.quote.text;
+      const qa = articleOf(t.quote.article, 6000);
+      if (qa) out.quoted_article = qa;
+    }
   }
   const follow = ((thread && thread.thread) || [])
     .filter((x) => x && x.id !== post.id && (!post.handle || !x.author || x.author.screen_name === post.handle))
     .slice(0, 6)
-    .map((x) => String(x.text || '').slice(0, 1500))
+    .map((x) => {
+      const a = articleOf(x.article, 3000);
+      return a ? `X Article "${a.title}":\n${a.text}` : String(x.text || '').slice(0, 1500);
+    })
     .filter(Boolean);
   if (follow.length) out.author_thread = follow;
   return out;

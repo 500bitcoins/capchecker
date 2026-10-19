@@ -335,7 +335,7 @@
           'Run AI check', h('span', { class: 'cost' }, '~0.05 credits'));
         actions.append(quick);
       }
-      const deep = h('button', { class: 'btn' + (ctx.pattern ? '' : ' primary'), onclick: () => { busy(deep, 'Deep checking, up to a minute'); ctx.onDeep().then(close, fail); } },
+      const deep = h('button', { class: 'btn' + (ctx.pattern ? '' : ' primary'), onclick: () => { busy(deep, 'Deep checking, can take 1-2 minutes'); ctx.onDeep().then(close, fail); } },
         'Deep check', h('span', { class: 'cost' }, '~5–15 credits'));
       actions.append(deep);
     }
