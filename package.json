@@ -1,0 +1,18 @@
+{
+  "name": "capchecker",
+  "version": "0.1.2",
+  "private": true,
+  "description": "Chrome extension that stamps hype and scam posts on X with a CAP score and reasons.",
+  "license": "MIT",
+  "author": "500altcoins",
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "test:e2e": "node test/e2e/run.mjs",
+    "icons": "node scripts/make-icons.mjs",
+    "zip": "node scripts/zip.mjs",
+    "check": "node scripts/check-post.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.64.1"
+  }
+}

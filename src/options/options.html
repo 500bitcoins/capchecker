@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CapChecker settings</title>
+  <link rel="stylesheet" href="../ui/base.css">
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <main>
+    <header class="top">
+      <img src="../../icons/icon128.png" alt="" width="44" height="44">
+      <div>
+        <h1>CapChecker</h1>
+        <p class="lede">Stamps hype and scam posts on X with a score and the reasons behind it.</p>
+      </div>
+    </header>
+
+    <section class="card">
+      <h2>Darkwoods API key</h2>
+      <p class="help">AI checks run on your own <a id="kw-link" target="_blank" rel="noopener noreferrer">Darkwoods</a> account and are paid from your credits. A quick check costs about 0.05 credits.</p>
+      <div class="key-row">
+        <input id="apiKey" type="password" autocomplete="off" spellcheck="false" placeholder="dwk_…" aria-label="Darkwoods API key">
+        <button id="toggleKey" class="btn ghost" type="button" aria-label="Show key">Show</button>
+        <button id="saveKey" class="btn primary" type="button">Save and test</button>
+      </div>
+      <p id="keyStatus" class="status" role="status"></p>
+      <div class="warn">
+        <strong>Darkwoods keys have no spending limit of their own.</strong>
+        A key can spend your whole balance, so CapChecker stops at the daily cap below. Keep a small balance, and revoke the key in Darkwoods at any time.
+      </div>
+      <p class="help small">No account yet? <a id="ref-link" target="_blank" rel="noopener noreferrer">Get Darkwoods</a> <span class="tag">referral link</span>. Create a key under API keys after you sign in.</p>
+    </section>
+
+    <section class="card">
+      <h2>Checks</h2>
+      <label class="row">
+        <span><strong>CapChecker on</strong><small>Turn off to stop all scoring and stamps.</small></span>
+        <input id="enabled" type="checkbox" class="switch">
+      </label>
+      <label class="row">
+        <span><strong>Auto-check suspicious posts</strong><small>Runs a quick AI check when a flagged post scrolls into view.</small></span>
+        <input id="autoCheck" type="checkbox" class="switch">
+      </label>
+      <label class="row">
+        <span><strong>Sensitivity</strong><small>How easily the pattern rules flag a post for an AI check.</small></span>
+        <select id="threshold">
+          <option value="20">High</option>
+          <option value="30">Normal</option>
+          <option value="45">Low</option>
+        </select>
+      </label>
+      <label class="row">
+        <span><strong>Show BAIT stamps</strong><small>Marks posts built to farm follows, bookmarks and replies, separately from cap.</small></span>
+        <input id="showBait" type="checkbox" class="switch">
+      </label>
+      <label class="row">
+        <span><strong>Show "No cap" on checked posts</strong><small>Otherwise only cap, probable cap and unclear are shown.</small></span>
+        <input id="showNoCap" type="checkbox" class="switch">
+      </label>
+    </section>
+
+    <section class="card">
+      <h2>Spending</h2>
+      <label class="row">
+        <span><strong>Daily cap</strong><small>CapChecker stops checking for the rest of the day (UTC) once it has spent this much.</small></span>
+        <span class="num-input"><input id="dailyCap" type="number" min="1" max="10000" step="1"><span>credits</span></span>
+      </label>
+      <div class="meter" aria-hidden="true"><span id="meterFill"></span></div>
+      <p id="usageText" class="status"></p>
+    </section>
+
+    <section class="card">
+      <h2>Models</h2>
+      <label class="row">
+        <span><strong>Quick check</strong><small>Runs automatically. Pick something fast and cheap.</small></span>
+        <select id="quickModel"></select>
+      </label>
+      <label class="row">
+        <span><strong>Deep check</strong><small>Runs when you ask for it, with web research.</small></span>
+        <select id="deepModel"></select>
+      </label>
+      <label class="row">
+        <span><strong>Web search in deep checks</strong><small>0.85 credits per search, up to about 4 per check.</small></span>
+        <input id="deepWebSearch" type="checkbox" class="switch">
+      </label>
+      <label class="row">
+        <span><strong>Fetch full post details for deep checks</strong><small>Reads author details and full X Article text from the public fxtwitter API.</small></span>
+        <input id="useFxtwitter" type="checkbox" class="switch">
+      </label>
+    </section>
+
+    <section class="card">
+      <h2>Saved results</h2>
+      <p class="help">Results are kept on this device for 7 days so the same post is never paid for twice.</p>
+      <button id="clearCache" class="btn ghost" type="button">Clear saved results</button>
+      <span id="cacheStatus" class="status inline" role="status"></span>
+    </section>
+
+    <footer class="foot">
+      <span>Automated opinion, can be wrong.</span>
+      <span><span id="version"></span> · <a id="author-link" target="_blank" rel="noopener noreferrer">by @500altcoins</a> · <a href="https://github.com/500bitcoins/capchecker" target="_blank" rel="noopener noreferrer">Source</a> · <a href="https://github.com/500bitcoins/capchecker/releases" target="_blank" rel="noopener noreferrer">Updates</a></span>
+    </footer>
+  </main>
+  <script src="../shared/settings.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>

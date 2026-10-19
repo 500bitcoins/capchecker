@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>CapChecker</title>
+  <link rel="stylesheet" href="../ui/base.css">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header>
+    <img src="../../icons/icon48.png" alt="" width="28" height="28">
+    <strong>CapChecker</strong>
+    <input id="enabled" type="checkbox" class="switch" aria-label="CapChecker on">
+  </header>
+
+  <div id="noKey" class="nokey" hidden>
+    <p>Add your Darkwoods API key to run AI checks. Pattern checks work without one.</p>
+    <div class="buttons">
+      <button id="addKey" class="btn primary" type="button">Add key</button>
+      <a id="refLink" class="btn" target="_blank" rel="noopener noreferrer">Get Darkwoods <span class="tag">referral</span></a>
+    </div>
+  </div>
+
+  <section class="stats">
+    <div><span id="scanned" class="n">0</span><span class="l">scanned</span></div>
+    <div><span id="flagged" class="n">0</span><span class="l">flagged</span></div>
+    <div><span id="caps" class="n cap">0</span><span class="l">cap</span></div>
+    <div><span id="baits" class="n bait">0</span><span class="l">bait</span></div>
+  </section>
+
+  <section class="spend">
+    <div class="spend-row"><span>Spent today</span><span id="spent" class="num">0 / 50 credits</span></div>
+    <div class="meter" aria-hidden="true"><span id="meterFill"></span></div>
+  </section>
+
+  <footer>
+    <button id="settings" class="link" type="button">Settings</button>
+    <span class="right"><span id="version"></span> · <a id="author" target="_blank" rel="noopener noreferrer">by @500altcoins</a></span>
+  </footer>
+  <script src="../shared/settings.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

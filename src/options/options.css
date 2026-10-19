@@ -1,0 +1,97 @@
+main {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 40px 16px 56px;
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+.top img { border-radius: 10px; }
+h1 { margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -.01em; }
+.lede { margin: 2px 0 0; color: var(--muted); }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+h2 { margin: 0 0 6px; font-size: 17px; font-weight: 800; }
+.help { margin: 0 0 14px; color: var(--muted); }
+.help.small { margin: 14px 0 0; font-size: 13px; }
+.help a { color: var(--text); font-weight: 600; }
+
+.key-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.key-row input {
+  flex: 1 1 240px;
+  min-width: 0;
+  height: 40px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--text);
+  font: 14px ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+.key-row .btn { height: 40px; }
+.btn.ghost { background: var(--bg); }
+
+.warn {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--warn-bg);
+  border: 1px solid var(--warn-line);
+  font-size: 13px;
+}
+.warn strong { display: block; margin-bottom: 2px; }
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+  cursor: pointer;
+}
+.card h2 + .row, .card .help + .row { border-top: 0; }
+.row > span:first-child { display: flex; flex-direction: column; min-width: 0; }
+.row small { color: var(--muted); font-size: 13px; margin-top: 1px; }
+.row select, .num-input input {
+  height: 36px;
+  padding: 0 10px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  max-width: 220px;
+}
+.num-input { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 13px; flex: none; }
+.num-input input { width: 90px; text-align: right; font-variant-numeric: tabular-nums; }
+
+.card .meter { margin-top: 4px; }
+
+.foot {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 24px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.foot a { color: var(--muted); text-decoration: none; }
+.foot a:hover { color: var(--text); }
+
+@media (max-width: 480px) {
+  main { padding-top: 24px; }
+  .row { align-items: flex-start; }
+  .row select { max-width: 150px; }
+}
