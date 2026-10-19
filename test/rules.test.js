@@ -12,28 +12,28 @@ test('cap posts score high enough to trigger a check', () => {
   }
 });
 
-test('savipww: 758x in 11 days with bot printing', () => {
-  const r = scorePost(F.cap.savipww);
+test('758x in 11 days with bots printing', () => {
+  const r = scorePost(F.cap.printer);
   assert.ok(r.score >= 65, `scored ${r.score}`);
   assert.ok(ids(r).includes('multiply'));
   assert.match(r.reasons.find((x) => x.id === 'multiply').title, /\$100 into \$75,796 \(758x\)/);
   assert.ok(ids(r).includes('fastGain'));
 });
 
-test('0x_exit: multiplication plus undisclosed referral', () => {
-  const r = scorePost(F.cap.exit);
+test('copy bot: multiplication plus undisclosed referral', () => {
+  const r = scorePost(F.cap.copybot);
   assert.ok(r.score >= 65, `scored ${r.score}`);
   assert.ok(ids(r).includes('referral'));
   assert.ok(ids(r).includes('aiBotProfit'));
 });
 
-test('razeden0: hype opener, no-effort and traction claims', () => {
-  const r = scorePost(F.cap.razeden0);
+test('overnight app: hype opener, no-effort and traction claims', () => {
+  const r = scorePost(F.cap.sleeper);
   for (const id of ['hype', 'zeroEffort', 'traction', 'fastGain']) assert.ok(ids(r).includes(id), `missing ${id}: ${ids(r)}`);
 });
 
 test('promo post lands in the unclear band, not cap', () => {
-  const r = scorePost(F.promo.brainextends);
+  const r = scorePost(F.promo.growth);
   assert.ok(r.score >= 20 && r.score < 60, `scored ${r.score}: ${ids(r)}`);
   assert.ok(ids(r).includes('growth'));
 });
@@ -63,6 +63,8 @@ test('findMultiply ignores ranges and small ratios', () => {
   assert.equal(findMultiply('plans from $10 to $1,000'), null);
   assert.equal(findMultiply('$500 into $650'), null);
   assert.equal(findMultiply('$1.2k into $40k').ratio.toFixed(1), '33.3');
+  assert.equal(Math.round(findMultiply('72 hours later: $218 → $3,406.').b), 3406);
+  assert.equal(findMultiply('went $218 → $3,406.50 today').b, 3406.5);
 });
 
 test('normalize unmasks censored swearing and joins split URLs', () => {
@@ -80,7 +82,7 @@ test('engagement-bait posts get flagged for a check', () => {
 test('cap and bait scores are split by rule kind', () => {
   const bait = scorePost(F.bait.pdfBelow);
   assert.ok(bait.baitScore > bait.capScore, `bait ${bait.baitScore} cap ${bait.capScore}`);
-  const cap = scorePost(F.cap.exit);
+  const cap = scorePost(F.cap.copybot);
   assert.ok(cap.capScore > cap.baitScore, `cap ${cap.capScore} bait ${cap.baitScore}`);
   for (const r of cap.reasons) assert.ok(['cap', 'bait'].includes(r.kind));
 });

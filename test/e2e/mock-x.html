@@ -4,105 +4,186 @@
 <meta charset="utf-8">
 <title>Home / X</title>
 <style>
-  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-  body.dark { background: rgb(0, 0, 0); color: rgb(231, 233, 234); }
-  body.light { background: rgb(255, 255, 255); color: rgb(15, 20, 25); }
-  .col { width: 600px; margin: 0 auto; border-left: 1px solid #2f3336; border-right: 1px solid #2f3336; position: relative; }
-  body.light .col { border-color: #eff3f4; }
-  .timeline { position: relative; }
-  [data-testid="cellInnerDiv"] { position: relative; transform: translateY(0); border-bottom: 1px solid #2f3336; }
-  body.light [data-testid="cellInnerDiv"] { border-color: #eff3f4; }
-  article { position: relative; display: flex; gap: 12px; padding: 12px 16px; cursor: pointer; }
-  .avatar { width: 40px; height: 40px; border-radius: 50%; background: #536471; flex: none; }
+  :root { --bg: #000; --text: #e7e9ea; --muted: #71767b; --line: #2f3336; --card: #16181c; --hover: #080808; --chip: #202327; --blue: #1d9bf0; }
+  body.light { --bg: #fff; --text: #0f1419; --muted: #536471; --line: #eff3f4; --card: #f7f9f9; --hover: #f7f7f7; --chip: #eff3f4; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--text); }
+  body { font: 15px/20px -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; text-decoration: none; }
+  svg { display: block; }
+  .shell { display: flex; justify-content: center; min-height: 100vh; }
+  .nav { width: 88px; display: flex; flex-direction: column; align-items: flex-end; padding: 8px 12px 0 0; gap: 4px; position: sticky; top: 0; height: 100vh; }
+  .nav .ic { width: 50px; height: 50px; border-radius: 50%; display: grid; place-items: center; color: var(--text); }
+  .nav .ic svg { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .nav .ic.on svg { stroke-width: 2.4; }
+  .nav .post { margin-top: 12px; width: 50px; height: 50px; border-radius: 50%; background: var(--text); color: var(--bg); display: grid; place-items: center; }
+  .nav .post svg { width: 22px; height: 22px; stroke: currentColor; stroke-width: 2.4; fill: none; stroke-linecap: round; }
+  .col { width: 600px; border-left: 1px solid var(--line); border-right: 1px solid var(--line); min-height: 100vh; }
+  .tabs { position: sticky; top: 0; z-index: 5; display: flex; height: 53px; border-bottom: 1px solid var(--line); background: color-mix(in srgb, var(--bg) 85%, transparent); backdrop-filter: blur(12px); }
+  .tabs div { flex: 1; display: flex; align-items: center; justify-content: center; color: var(--muted); font-weight: 500; position: relative; }
+  .tabs div.on { color: var(--text); font-weight: 700; }
+  .tabs div.on::after { content: ""; position: absolute; bottom: 0; width: 56px; height: 4px; border-radius: 2px; background: var(--blue); }
+  [data-testid="cellInnerDiv"] { border-bottom: 1px solid var(--line); }
+  article { position: relative; display: flex; gap: 8px; padding: 12px 16px 4px; }
+  .av { width: 40px; height: 40px; border-radius: 50%; flex: none; display: grid; place-items: center; color: #fff; font-weight: 800; font-size: 15px; letter-spacing: -0.02em; }
   .body { flex: 1; min-width: 0; }
-  [data-testid="User-Name"] { display: flex; gap: 4px; font-size: 15px; }
-  [data-testid="User-Name"] .n { font-weight: 700; }
-  [data-testid="User-Name"] a { color: #71767b; text-decoration: none; }
-  [data-testid="tweetText"] { font-size: 15px; line-height: 20px; white-space: pre-wrap; margin-top: 2px; }
-  [data-testid="tweetText"] a { color: rgb(29, 155, 240); text-decoration: none; }
-  .card { margin-top: 12px; border: 1px solid #2f3336; border-radius: 16px; overflow: hidden; }
-  body.light .card { border-color: #cfd9de; }
-  .card .cover { height: 160px; background: linear-gradient(135deg, #1d2a3a, #0b1520); }
-  .card .t { padding: 10px 12px; font-weight: 700; }
-  .card .d { padding: 0 12px 12px; color: #71767b; font-size: 14px; }
-  [role="group"] { display: flex; justify-content: space-between; max-width: 425px; margin-top: 12px; color: #71767b; font-size: 13px; }
-  .caret { position: absolute; top: 10px; right: 14px; color: #71767b; }
-  .video { margin-top: 12px; height: 220px; border-radius: 16px; background: #111; }
+  [data-testid="User-Name"] { display: flex; align-items: center; gap: 4px; white-space: nowrap; overflow: hidden; padding-right: 30px; }
+  [data-testid="User-Name"] .n { font-weight: 700; overflow: hidden; text-overflow: ellipsis; }
+  [data-testid="User-Name"] .h, [data-testid="User-Name"] .t { color: var(--muted); }
+  .badge { width: 18px; height: 18px; flex: none; }
+  .more { position: absolute; top: 10px; right: 12px; width: 34px; height: 34px; display: grid; place-items: center; color: var(--muted); }
+  .more svg { width: 19px; height: 19px; fill: currentColor; }
+  [data-testid="tweetText"] { white-space: pre-wrap; overflow-wrap: anywhere; margin-top: 2px; }
+  [data-testid="tweetText"] a { color: var(--blue); }
+  .media { margin-top: 12px; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; position: relative; }
+  .article .cover { height: 180px; position: relative; }
+  .article .meta { padding: 12px; }
+  .article .kicker { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 700; padding: 1px 6px; border-radius: 4px; background: var(--chip); color: var(--text); margin-bottom: 6px; }
+  .article [data-testid="twitter-article-title"] { font-weight: 800; font-size: 17px; line-height: 22px; }
+  .article .desc { color: var(--muted); margin-top: 4px; }
+  .video { height: 300px; }
+  .video .dur { position: absolute; left: 10px; bottom: 10px; padding: 0 6px; border-radius: 4px; background: rgba(0,0,0,.7); color: #fff; font-size: 13px; font-weight: 600; }
+  .video .play { position: absolute; inset: 0; margin: auto; width: 64px; height: 64px; border-radius: 50%; background: var(--blue); display: grid; place-items: center; box-shadow: 0 0 0 4px rgba(255,255,255,.9); }
+  .video .play svg { width: 28px; height: 28px; fill: #fff; margin-left: 4px; }
+  .photo { height: 250px; }
+  [role="group"] { display: flex; justify-content: space-between; max-width: 100%; padding: 8px 0 4px; margin-right: -8px; color: var(--muted); font-size: 13px; }
+  [role="group"] span { display: inline-flex; align-items: center; gap: 4px; }
+  [role="group"] svg { width: 18.75px; height: 18.75px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+  .side { width: 350px; padding: 6px 0 0 28px; }
+  .search { height: 44px; border-radius: 22px; border: 1px solid var(--line); display: flex; align-items: center; gap: 12px; padding: 0 16px; color: var(--muted); }
+  .search svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; }
+  .box { margin-top: 16px; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+  .box h2 { margin: 0; padding: 12px 16px; font-size: 20px; font-weight: 800; }
+  .trend { padding: 12px 16px; }
+  .trend small { display: block; color: var(--muted); font-size: 13px; }
+  .trend b { display: block; font-size: 15px; }
 </style>
 </head>
 <body class="dark">
-<div class="col"><div class="timeline" id="tl"></div></div>
+<div class="shell">
+  <nav class="nav">
+    <div class="ic on"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V21h-6v-6H9v6H3z"/></svg></div>
+    <div class="ic"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></div>
+    <div class="ic"><svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 1 1 12 0c0 6 2.5 8 2.5 8h-17S6 15 6 9z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg></div>
+    <div class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m4 7 8 6 8-6"/></svg></div>
+    <div class="ic"><svg viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z"/></svg></div>
+    <div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></div>
+    <div class="post"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>
+  </nav>
+  <main class="col">
+    <div class="tabs"><div class="on">For you</div><div>Following</div></div>
+    <div id="tl"></div>
+  </main>
+  <aside class="side">
+    <div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>Search</div>
+    <div class="box">
+      <h2>What's happening</h2>
+      <div class="trend"><small>Technology · Trending</small><b>Opus 5.5</b><small>48.2K posts</small></div>
+      <div class="trend"><small>Business &amp; finance · Trending</small><b>#Bitcoin</b><small>212K posts</small></div>
+      <div class="trend"><small>Trending in Crypto</small><b>Memecoin season</b><small>19.7K posts</small></div>
+      <div class="trend"><small>Technology · Trending</small><b>AI agents</b><small>31.4K posts</small></div>
+    </div>
+  </aside>
+</div>
 <script>
+// A fictional X timeline for tests and store screenshots. No real accounts.
 const params = new URLSearchParams(location.search);
 document.body.className = params.get('theme') === 'light' ? 'light' : 'dark';
 
+const ICON = {
+  reply: '<svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 0 1 8-8h1a7 7 0 0 1 0 14H9l-4 3v-4.5A8 8 0 0 1 4 12z"/></svg>',
+  repost: '<svg viewBox="0 0 24 24"><path d="m17 3 3 3-3 3"/><path d="M4 12v-2a4 4 0 0 1 4-4h12"/><path d="m7 21-3-3 3-3"/><path d="M20 12v2a4 4 0 0 1-4 4H4"/></svg>',
+  like: '<svg viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-9.4-9C1.2 7.6 3.4 4.5 6.7 4.5c2 0 3.4 1.1 5.3 3.2 1.9-2.1 3.3-3.2 5.3-3.2 3.3 0 5.5 3.1 4.1 6.5-1.9 4.4-9.4 9-9.4 9z"/></svg>',
+  views: '<svg viewBox="0 0 24 24"><path d="M5 20v-8M10 20V5M15 20v-6M20 20V9"/></svg>',
+  mark: '<svg viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z"/></svg>',
+  share: '<svg viewBox="0 0 24 24"><path d="M12 3v12M7 8l5-5 5 5M4 14v5a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5"/></svg>',
+};
+const BADGE = '<svg class="badge" viewBox="0 0 22 22"><path fill="#1d9bf0" d="M11 1.4l2.7 1.9 3.3-.1 1 3.1 2.7 2-1 3.1 1 3.1-2.7 2-1 3.1-3.3-.1L11 20.6l-2.7-1.9-3.3.1-1-3.1-2.7-2 1-3.1-1-3.1 2.7-2 1-3.1 3.3.1z"/><path d="M6.9 11.3l2.8 2.7 5.5-5.6" stroke="#fff" stroke-width="2.1" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const MORE = '<div class="more" data-testid="caret"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg></div>';
+
+const chart = (color, pts) => `<svg viewBox="0 0 600 180" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%"><defs><linearGradient id="g${color.slice(1)}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${color}" stop-opacity=".35"/><stop offset="1" stop-color="${color}" stop-opacity="0"/></linearGradient></defs><polygon fill="url(#g${color.slice(1)})" points="0,180 ${pts} 600,180"/><polyline fill="none" stroke="${color}" stroke-width="3.5" stroke-linejoin="round" points="${pts}"/></svg>`;
+const MOON = '0,165 40,160 80,163 120,150 160,154 200,140 240,128 280,132 320,110 360,96 400,100 440,70 480,52 520,40 560,22 600,10';
+
+const MEDIA = {
+  article: (title, desc) => `<div class="media article"><div class="cover" style="background:linear-gradient(135deg,#0b2016,#04110a)">${chart('#22c55e', MOON)}<div style="position:absolute;left:16px;top:14px;color:#86efac;font:800 13px/1 -apple-system,sans-serif;letter-spacing:.12em">SETUP GUIDE</div><div style="position:absolute;left:16px;bottom:14px;color:#fff;font:800 30px/1 -apple-system,sans-serif">$75,796.28</div></div><div class="meta"><div class="kicker">Article</div><div data-testid="twitter-article-title">${title}</div><div class="desc">${desc}</div></div></div>`,
+  video: () => `<div class="media video" data-testid="videoPlayer" style="background:radial-gradient(circle at 50% 45%,#9ad7ff 0%,#2a6ea6 22%,#0b2742 52%,#04101c 100%)"><div class="play"><svg viewBox="0 0 24 24"><path d="M7 4.5v15l12-7.5z"/></svg></div><div class="dur">0:18</div></div>`,
+  wallets: () => `<div class="media photo" data-testid="tweetPhoto" style="background:#0d1117;padding:16px 18px;font:600 13px/1 -apple-system,sans-serif;color:#c9d1d9"><div style="display:flex;justify-content:space-between;color:#8b949e;margin-bottom:12px;letter-spacing:.06em;font-size:11px"><span>WALLET</span><span>7D PNL</span><span>WIN RATE</span></div>${[['7xK…f3Qa','+$116,820','91%'],['Hn2…9pLr','+$90,914','88%'],['Bq8…mE1c','+$74,203','86%'],['4tR…aZ7w','+$61,557','84%'],['Lp0…c2Vd','+$58,090','83%']].map(([w,p,r])=>`<div style="display:flex;justify-content:space-between;padding:9px 0;border-top:1px solid #21262d"><span style="font-family:ui-monospace,Menlo,monospace">${w}</span><span style="color:#3fb950">${p}</span><span>${r}</span></div>`).join('')}<img alt="" style="display:none"></div>`,
+  code: () => `<div class="media photo" data-testid="tweetPhoto" style="background:#0d1117;padding:18px 20px;font:13px/22px ui-monospace,Menlo,monospace;color:#c9d1d9">${[['#ff7b72','def'],['#d2a8ff',' run_backtest'],['#c9d1d9','(strategy, bars):']].map(([c,t])=>`<span style="color:${c}">${t}</span>`).join('')}<br>${['    equity = 10_000','    for bar in bars:','        signal = strategy.on_bar(bar)','        equity = fill(signal, bar, fee=0.001)','    return Report(equity, trades=strategy.trades)','','# 214 tests passing · MIT licensed'].map((l,i)=>`<span style="color:${i===6?'#8b949e':'#c9d1d9'}">${l.replace(/ /g,'&nbsp;')}</span>`).join('<br>')}<img alt="" style="display:none"></div>`,
+};
+
 const posts = [
-  { id: '2111932915013804382', handle: '0x_exit', name: 'exit',
-    html: `I built a tracker for 100 of the most profitable wallets on Fomo App and told Grok Bot to copy them.
-
-the top three showed $116.8k, $90.9k and $74.2k in profit.
-
-it lost $41 in the first hour.
-
-72 hours later: $218 → $3,406 trading through fomo.
-
-> worst loss: FTR −$29
-> biggest close: PIERRE +$604
-
-check here: <a href="https://t.co/dXBL5Qajt2"><span style="position:absolute;opacity:0">https://</span>fomo.family/?r=invite</a>`,
-    video: true },
-  { id: '2110007684976030097', handle: 'savipww', name: 'savip.', html: '',
-    article: { title: 'The Hedge Fund Terminal That Let My Grok Bots Print $100 Into $75,796 In 11 Days (Setup Guide)',
-               desc: 'Eleven days ago I started a fresh account with $100. Last night it closed at $75,796.28.' } },
-  { id: '2111990000000000001', handle: 'newsdesk', name: 'Markets Desk',
-    html: 'Apple reports $94.9B in revenue for the quarter, up 6% year over year. Services hit a record $27.4B.' },
-  { id: '2111929022192247240', handle: 'razeden0', name: 'RazeDen',
-    html: `who the f*ck built this.. my ai setup looks like all the most powerful ai tools merged together:
-
-opus 5.5 + REA + Jev + Dots + Grok Bot + Obsidian
-
-6 tools. 1 system. 0 manual work.
-
-i woke up to 1 live app, 212 signups and 31 paid users at $9. $279 before breakfast
-
-i didn't write 1 line of code. i didn't open 1 tab. i just slept ↓` },
-  { id: '2112187184858145200', handle: '0xkerazcity', name: 'kera',
-    html: `Opus 5.5 went inside a raindrop on my window and found a single hydrogen bond, this AI is a f*cking artist
+  { id: '1000000000000000001', handle: 'printer_go_brrr', name: 'Printer Go Brrr', color: '#16a34a', ago: '2h', html: '',
+    media: MEDIA.article('The Terminal That Let My Grok Bots Print $100 Into $75,796 In 11 Days (Setup Guide)', 'Eleven days ago I opened a fresh account with $100. Last night it closed at $75,796.28.'),
+    counts: ['412', '1.2K', '6.8K', '1.4M'] },
+  { id: '1000000000000000005', handle: 'pdf_below', name: 'Prompt Lord', color: '#7c3aed', ago: '4h', media: MEDIA.video(),
+    html: `Opus 5.5 zoomed into a raindrop on my window and found a single hydrogen bond, this AI is a f*cking artist
 
 this is unreal…
 
-Drop the PDF below into Opus 5.5, you'll thank me later.
+Drop the PDF below into Opus 5.5, you'll thank me later.`,
+    counts: ['96', '310', '2.9K', '402K'] },
+  { id: '1000000000000000010', handle: 'markets_desk', name: 'Markets Desk', color: '#0369a1', ago: '5h',
+    html: 'Apple reports $94.9B in revenue for the quarter, up 6% year over year. Services hit a record $27.4B.',
+    counts: ['58', '204', '1.1K', '233K'] },
+  { id: '1000000000000000003', handle: 'exit_liq_enjoyer', name: 'exit liq enjoyer', color: '#ea580c', ago: '6h', media: MEDIA.wallets(),
+    html: `I tracked the 100 most profitable wallets and told my bot to copy them.
 
-Then save the article, it's the only Opus 5.5 motion design playbook you'll need.`, video: true },
-  { id: '2111990000000000002', handle: 'catperson', name: 'Sam',
-    html: 'my cat knocked my coffee off the desk again. third time this week' },
-  { id: '2111569272732553535', handle: 'brainextends', name: 'Brain',
-    html: `Holy F*CK this acc is an absoloute masterclass in organic growth
+72 hours later: $218 → $3,406.
+
+try it here: <a href="https://t.co/x1"><span style="position:absolute;opacity:0">https://</span>brrrbot.app/?r=larry</a>`,
+    counts: ['44', '120', '890', '97K'] },
+  { id: '1000000000000000007', handle: 'hedgefund_of_one', name: 'Hedge Fund of One', color: '#0f766e', ago: '7h',
+    html: `Opus 5.5 + REA now runs my entire hedge fund.
+
+0 manual work. It found 3 trades before breakfast and closed all of them green.
+
+The setup is simpler than you think ↓`,
+    counts: ['133', '402', '3.3K', '511K'] },
+  { id: '1000000000000000002', handle: 'trust_me_bro_ai', name: 'Trust Me Bro', color: '#db2777', ago: '8h',
+    html: `who the f*ck built this.. my ai stack is every top tool merged into one
+
+5 tools. 1 system. 0 manual work.
+
+woke up to a live app, 212 signups and 31 paid users at $9. $279 before breakfast
+
+i didn't write 1 line of code. i just slept ↓`,
+    counts: ['288', '640', '5.1K', '880K'] },
+  { id: '1000000000000000008', handle: 'actual_builder', name: 'Actual Builder', color: '#4f46e5', ago: '9h', media: MEDIA.code(),
+    html: 'Shipped v0.3 of my open source backtester today. Fees, slippage and walk-forward tests are in. Code and docs on GitHub, PRs welcome.',
+    counts: ['31', '87', '640', '41K'] },
+  { id: '1000000000000000011', handle: 'catperson', name: 'Sam', color: '#a16207', ago: '10h',
+    html: 'my cat knocked my coffee off the desk again. third time this week',
+    counts: ['12', '9', '301', '18K'] },
+  { id: '1000000000000000006', handle: 'growth_hacker_9000', name: 'Growth Hacker 9000', color: '#be123c', ago: '11h',
+    html: `Holy F*CK this account is an absolute masterclass in organic growth
 
 -> 22M Views
 -> 154K Followers
 
-In 5 F*CKING days and its all made using ai
+In 5 F*CKING days and it's all made with ai
 
-if you want videos like this for ur brand / app (First link in comments)` },
+want videos like this for your brand? (First link in comments)`,
+    counts: ['77', '150', '1.9K', '264K'] },
 ];
 
+const initials = (n) => n.split(/\s+/).map((w) => w[0]).join('').slice(0, 2).toUpperCase();
 const tl = document.getElementById('tl');
 for (const p of posts) {
   const cell = document.createElement('div');
   cell.setAttribute('data-testid', 'cellInnerDiv');
   cell.innerHTML = `
     <article data-testid="tweet" tabindex="0">
-      <div class="avatar" data-testid="Tweet-User-Avatar"></div>
+      <div class="av" data-testid="Tweet-User-Avatar" style="background:linear-gradient(135deg,${p.color},${p.color}cc)">${initials(p.name)}</div>
       <div class="body">
-        <div data-testid="User-Name"><span class="n">${p.name}</span><a href="/${p.handle}">@${p.handle}</a> ·
-          <a href="/${p.handle}/status/${p.id}"><time datetime="2026-10-18T21:30:19.000Z">Oct 18</time></a></div>
+        <div data-testid="User-Name"><a class="n" href="/${p.handle}">${p.name}</a>${BADGE}<a class="h" href="/${p.handle}">@${p.handle}</a><span class="t">·</span>
+          <a class="t" href="/${p.handle}/status/${p.id}"><time datetime="2026-10-19T12:00:00.000Z">${p.ago}</time></a></div>
         ${p.html ? `<div data-testid="tweetText" lang="en">${p.html}</div>` : ''}
-        ${p.video ? '<div class="video" data-testid="videoPlayer"></div>' : ''}
-        ${p.article ? `<div class="card"><div class="cover" data-testid="article-cover-image"></div><div class="t" data-testid="twitter-article-title">${p.article.title}</div><div class="d">${p.article.desc}</div></div>` : ''}
-        <div role="group" aria-label="replies, reposts, likes"><span>27</span><span>30</span><span>247</span><span>391K</span></div>
+        ${p.media || ''}
+        <div role="group" aria-label="replies, reposts, likes, views">
+          <span>${ICON.reply}${p.counts[0]}</span><span>${ICON.repost}${p.counts[1]}</span><span>${ICON.like}${p.counts[2]}</span><span>${ICON.views}${p.counts[3]}</span><span>${ICON.mark}${ICON.share}</span>
+        </div>
       </div>
-      <div class="caret" data-testid="caret">···</div>
+      ${MORE}
     </article>`;
   cell.querySelector('article').addEventListener('click', () => { document.body.dataset.navigated = p.id; });
   tl.append(cell);

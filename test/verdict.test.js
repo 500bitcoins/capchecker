@@ -30,7 +30,7 @@ test('tiers follow the score bands', () => {
 });
 
 test('pattern-only verdicts use the pattern scores and reasons', () => {
-  const h = scorePost(F.cap.exit);
+  const h = scorePost(F.cap.copybot);
   const v = V.build({ id: 'x', heuristic: h });
   assert.equal(v.depth, 'pattern');
   assert.equal(v.score, h.capScore);
@@ -39,7 +39,7 @@ test('pattern-only verdicts use the pattern scores and reasons', () => {
 });
 
 test('AI verdicts lead with AI reasons and do not repeat pattern ones', () => {
-  const h = scorePost(F.cap.exit);
+  const h = scorePost(F.cap.copybot);
   const ai = V.normalizeAi({ score: 78, summary: 's', reasons: [{ title: 'One', severity: 'high' }, { title: 'Two' }, { title: 'Three' }] }, 'ai');
   const v = V.build({ id: 'x', heuristic: h, ai, depth: 'quick', model: 'm', credits: 0.05 });
   assert.equal(v.score, 78);
@@ -76,5 +76,5 @@ test('red CAP always wins; between CAP? and BAIT the higher score wins', () => {
 
 test('pattern pill leads with whichever signal is stronger', () => {
   assert.equal(V.patternLead(V.build({ id: 'a', heuristic: scorePost(F.bait.pdfBelow) })).title, 'Possible bait');
-  assert.equal(V.patternLead(V.build({ id: 'b', heuristic: scorePost(F.cap.exit) })).title, 'Possible cap');
+  assert.equal(V.patternLead(V.build({ id: 'b', heuristic: scorePost(F.cap.copybot) })).title, 'Possible cap');
 });

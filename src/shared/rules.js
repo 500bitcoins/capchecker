@@ -7,7 +7,8 @@
 
   const NUMWORD = String.raw`(?:\d+|a|an|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)`;
   const FILLER = String.raw`(?:(?:just|only|fuck\w*)\s+)?`;
-  const AMOUNT = String.raw`\$\s?(\d[\d,]*(?:\.\d+)?)\s?([kmb])?(?![\w.])`;
+  // An amount may end a sentence ("$3,406."), but "$3,406.5" is one number.
+  const AMOUNT = String.raw`\$\s?(\d[\d,]*(?:\.\d+)?)\s?([kmb])?(?!\w|\.\d)`;
   const ARROW = String.raw`\s*(?:→|->|=>|➡️?|⟶|into|to|became|grew\s+(?:in)?to|turned\s+into|is\s+now)\s*`;
 
   const RE = {

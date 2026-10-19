@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "CapChecker",
   "short_name": "CapChecker",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Stamps hype and scam posts on X with a CAP score and the reasons behind it. AI checks run on your own Darkwoods key.",
   "author": "500altcoins",
   "homepage_url": "https://github.com/500bitcoins/capchecker",

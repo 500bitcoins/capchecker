@@ -61,9 +61,12 @@ No. All code ships in the package.
 - Authentication information: yes. The user's Darkwoods API key is stored locally and sent only to Darkwoods.
 - Not sold to third parties, not used for unrelated purposes, not used for creditworthiness.
 
-## Assets still needed
+## Assets
 
-- At least one 1280×800 screenshot (the stamp and reasons panel on a timeline).
-- Small promo tile, 440×280.
-- Privacy policy URL: link to PRIVACY.md in the public repo.
-- A one-time $5 Chrome Web Store developer registration.
+All in `store/`, made from the real extension running on a fictional timeline (no real accounts):
+
+- `screenshot-1.png` … `screenshot-5.png`: 1280×800 screenshots, in listing order.
+- `promo-tile.png`: 440×280 small promo tile.
+- `marquee.png`: 1400×560 marquee (only used if the store features the extension).
+- Privacy policy URL: https://github.com/500bitcoins/capchecker/blob/main/PRIVACY.md
+- Still needed: a one-time $5 Chrome Web Store developer registration.

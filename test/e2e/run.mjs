@@ -21,6 +21,10 @@ const HEADED = process.env.HEADED === '1';
 
 const log = (...a) => console.log('·', ...a);
 
+// Fictional accounts in mock-x.html.
+const FLAGGED = ['@printer_go_brrr', '@pdf_below', '@exit_liq_enjoyer', '@hedgefund_of_one', '@trust_me_bro_ai', '@growth_hacker_9000'];
+const CALM = ['@markets_desk', '@actual_builder', '@catperson'];
+
 const userDir = fs.mkdtempSync(path.join(os.tmpdir(), 'capchecker-e2e-'));
 const context = await chromium.launchPersistentContext(userDir, {
   executablePath: chromiumPath(),
@@ -51,7 +55,7 @@ try {
     page.$$eval('article[data-testid="tweet"]', (arts) =>
       arts.map((a) => {
         const host = a.querySelector('.capchecker-host');
-        const handle = a.querySelector('[data-testid="User-Name"] a').textContent;
+        const handle = [...a.querySelectorAll('[data-testid="User-Name"] a')].map((x) => x.textContent).find((t) => t.startsWith('@'));
         const wrap = host && host.shadowRoot.querySelector('.wrap');
         const btn = wrap && wrap.querySelector('[title]');
         return {
@@ -66,15 +70,14 @@ try {
 
   // ---------- 1. pattern rules only, no key ----------
   await page.goto('https://x.com/home?theme=dark');
-  await page.waitForFunction(() => document.querySelectorAll('.capchecker-host').length >= 7, null, { timeout: 15000 });
+  await page.waitForFunction(() => document.querySelectorAll('.capchecker-host').length >= 9, null, { timeout: 15000 });
   let s = await byHandle();
   log('no key:', JSON.stringify(Object.fromEntries(Object.entries(s).map(([k, v]) => [k, v.state]))));
-  for (const h of ['@0x_exit', '@savipww', '@razeden0', '@brainextends']) assert.equal(s[h].state, 'pattern', `${h} should be flagged`);
-  for (const h of ['@newsdesk', '@catperson']) assert.equal(s[h].state, 'idle', `${h} should not be flagged`);
-  assert.equal(s['@0xkerazcity'].state, 'pattern', '@0xkerazcity should be flagged');
-  assert.match(s['@0xkerazcity'].text, /Possible bait/);
+  for (const h of FLAGGED) assert.equal(s[h].state, 'pattern', `${h} should be flagged`);
+  for (const h of CALM) assert.equal(s[h].state, 'idle', `${h} should not be flagged`);
+  assert.match(s['@pdf_below'].text, /Possible bait/);
 
-  const pill = page.locator('article:has([href="/0x_exit"]) .capchecker-host');
+  const pill = page.locator('article:has([href="/exit_liq_enjoyer"]) .capchecker-host');
   await pill.locator('button').click();
   await page.waitForFunction(() => document.querySelector('.capchecker-panel-host')?.shadowRoot.querySelector('.panel'));
   const panelText = await page.evaluate(() => document.querySelector('.capchecker-panel-host').shadowRoot.textContent);
@@ -89,7 +92,7 @@ try {
 
   // ---------- 2. light theme ----------
   await page.goto('https://x.com/home?theme=light');
-  await page.waitForFunction(() => document.querySelectorAll('.capchecker-host').length >= 7);
+  await page.waitForFunction(() => document.querySelectorAll('.capchecker-host').length >= 9);
   assert.equal(await page.evaluate(() => document.querySelector('.capchecker-host').dataset.theme), 'light');
   await page.screenshot({ path: path.join(out, '2-pattern-light.png') });
   log('light theme ok');
@@ -119,7 +122,7 @@ try {
 
     await page.bringToFront();
     await page.goto('https://x.com/home?theme=dark');
-    await page.waitForFunction(() => document.querySelectorAll('.capchecker-host').length >= 7);
+    await page.waitForFunction(() => document.querySelectorAll('.capchecker-host').length >= 9);
     // Scroll so every flagged post enters the viewport and auto-checks.
     for (let y = 0; y <= 2400; y += 400) {
       await page.mouse.wheel(0, 400);
@@ -133,16 +136,16 @@ try {
     );
     s = await byHandle();
     for (const [h, v] of Object.entries(s)) log('ai:', h.padEnd(14), v.state.padEnd(8), v.text.slice(0, 40), v.error);
-    for (const h of ['@0x_exit', '@savipww', '@razeden0']) {
+    for (const h of ['@exit_liq_enjoyer', '@printer_go_brrr']) {
       assert.equal(s[h].state, 'verdict', `${h} should have an AI verdict`);
       assert.match(s[h].text, /CAP/, `${h} should be stamped`);
     }
-    for (const h of ['@0x_exit', '@savipww', '@razeden0', '@brainextends', '@0xkerazcity']) {
+    for (const h of FLAGGED) {
       const v = await sw.evaluate(async (id) => (await chrome.storage.local.get('v:' + id))['v:' + id], (await page.getAttribute(`article:has([href="/${h.slice(1)}"])`, 'data-capchecker-id')));
       log('   ', h, `cap ${v.score} bait ${v.bait}`, '|', v.summary);
     }
 
-    const kera = page.locator('article:has([href="/0xkerazcity"])');
+    const kera = page.locator('article:has([href="/pdf_below"])');
     await kera.scrollIntoViewIfNeeded();
     await page.evaluate(() => window.scrollBy(0, 120));
     await page.waitForTimeout(300);
@@ -156,7 +159,7 @@ try {
     await page.evaluate(() => window.scrollTo(0, 0));
     await page.waitForTimeout(400);
     await page.screenshot({ path: path.join(out, '5-stamps-dark.png') });
-    await page.locator('article:has([href="/0x_exit"]) .capchecker-host button').click();
+    await page.locator('article:has([href="/exit_liq_enjoyer"]) .capchecker-host button').click();
     await page.waitForFunction(() => document.querySelector('.capchecker-panel-host')?.shadowRoot.querySelector('.panel'));
     await page.waitForTimeout(400);
     await page.screenshot({ path: path.join(out, '6-verdict-panel-dark.png') });
@@ -172,7 +175,7 @@ try {
       });
       let verdict = null;
       while (Date.now() - t0 < 240000) {
-        verdict = await sw.evaluate(async () => (await chrome.storage.local.get('v:2111932915013804382'))['v:2111932915013804382']);
+        verdict = await sw.evaluate(async () => (await chrome.storage.local.get('v:1000000000000000003'))['v:1000000000000000003']);
         if (verdict && verdict.depth === 'deep') break;
         await page.waitForTimeout(2000);
       }
@@ -181,7 +184,7 @@ try {
       for (const r of verdict.reasons) log('   -', r.title, '|', r.detail);
       log('   sources:', JSON.stringify(verdict.sources));
       await page.waitForTimeout(500);
-      await page.locator('article:has([href="/0x_exit"]) .capchecker-host button').click();
+      await page.locator('article:has([href="/exit_liq_enjoyer"]) .capchecker-host button').click();
       await page.waitForFunction(() => document.querySelector('.capchecker-panel-host')?.shadowRoot.querySelector('.panel'));
       await page.waitForTimeout(400);
       await page.screenshot({ path: path.join(out, '7-deep-panel-dark.png') });

@@ -1,90 +1,82 @@
-// Real posts reviewed by hand (cap or not), plus ordinary posts that must stay
-// unflagged. Text is as it appears on X.
+// Fictional posts written in the styles CapChecker has to recognise, plus
+// ordinary posts that must stay unflagged. No real accounts.
 module.exports = {
   cap: {
-    savipww: {
-      id: '2110007684976030097',
-      handle: 'savipww',
+    printer: {
+      id: '1000000000000000001',
+      handle: 'printer_go_brrr',
       text: '',
-      articleTitle:
-        'The Hedge Fund Terminal That Let My Grok Bots Print $100 Into $75,796 In 11 Days (Setup Guide)',
-      cardText:
-        'Eleven days ago I started a fresh account with $100. Last night it closed at $75,796.28. You have seen the cockpit videos, this is what was running underneath them.',
+      articleTitle: 'The Terminal That Let My Grok Bots Print $100 Into $75,796 In 11 Days (Setup Guide)',
+      cardText: 'Eleven days ago I opened a fresh account with $100. Last night it closed at $75,796.28. Here is everything that ran underneath it.',
       links: [],
     },
-    razeden0: {
-      id: '2111929022192247240',
-      handle: 'razeden0',
-      text: `who the f*ck built this.. my ai setup looks like all the most powerful ai tools merged together:
+    sleeper: {
+      id: '1000000000000000002',
+      handle: 'trust_me_bro_ai',
+      text: `who the f*ck built this.. my ai stack is every top tool merged into one:
 
-opus 5.5 + REA + Jev + Dots + Grok Bot + Obsidian
+opus 5.5 + REA + Grok Bot + Obsidian
 
-6 tools. 1 system. 0 manual work.
+5 tools. 1 system. 0 manual work.
 
-then i gave it 1 task before bed: find something people pay for and build it by morning. budget - $10
+gave it one job before bed: find something people pay for and ship it by morning. budget $10
 
-i woke up to 1 live app, 212 signups and 31 paid users at $9. $279 before breakfast
+woke up to a live app, 212 signups and 31 paid users at $9. $279 before breakfast
 
-total cost of the night: $4.70 in tokens + $3 domain = $7.70. that's 36x back while i was asleep
-
-i didn't write 1 line of code. i didn't open 1 tab. i just slept
-
-everyone is waiting for agi. i already have 6 tools working the night shift ↓`,
+i didn't write 1 line of code. i just slept ↓`,
       links: [],
     },
-    exit: {
-      id: '2111932915013804382',
-      handle: '0x_exit',
-      text: `I built a tracker for 100 of the most profitable wallets on Fomo App and told Grok Bot to copy them.
+    copybot: {
+      id: '1000000000000000003',
+      handle: 'exit_liq_enjoyer',
+      text: `I tracked the 100 most profitable wallets and told my bot to copy them.
 
 the top three showed $116.8k, $90.9k and $74.2k in profit.
 
-it lost $41 in the first hour.
+lost $41 in the first hour.
 
-72 hours later: $218 → $3,406 trading through fomo.
+72 hours later: $218 → $3,406.
 
-> worst loss: FTR −$29
-> biggest close: PIERRE +$604
+> worst loss: −$29
+> biggest close: +$604
 
-check here: https://
-fomo.family/?r=invite
-
-PIERRE triggered Oura456, unipcs and surgz within 81 seconds. it later reached +27,567%.`,
-      links: [{ text: 'https://\nfomo.family/?r=invite', href: 'https://t.co/dXBL5Qajt2' }],
+try it here: https://
+brrrbot.app/?r=larry`,
+      links: [{ text: 'https://\nbrrrbot.app/?r=larry', href: 'https://t.co/x1' }],
     },
     guaranteed: {
-      id: '1',
-      handle: 'x',
+      id: '1000000000000000004',
+      handle: 'signals_daddy',
       text: 'My signals group has a 100% win rate. Guaranteed profits every week, risk-free. Join our VIP group t.me/+abc123',
       links: [],
     },
   },
   bait: {
     pdfBelow: {
-      id: '2112187184858145200',
-      handle: '0xkerazcity',
-      text: `Opus 5.5 went inside a raindrop on my window and found a single hydrogen bond, this AI is a f*cking artist
+      id: '1000000000000000005',
+      handle: 'pdf_below',
+      text: `Opus 5.5 zoomed into a raindrop on my window and found a single hydrogen bond, this AI is a f*cking artist
 
 this is unreal…
 
 Drop the PDF below into Opus 5.5, you'll thank me later.
 
-Then save the article, it's the only Opus 5.5 motion design playbook you'll need.`,
+Then save the article, it's the only motion design playbook you'll need.`,
       links: [],
     },
   },
   promo: {
-    brainextends: {
-      id: '2111569272732553535',
-      handle: 'brainextends',
-      text: `Holy F*CK this acc is an absoloute masterclass in organic growth
+    growth: {
+      id: '1000000000000000006',
+      handle: 'growth_hacker_9000',
+      text: `Holy F*CK this account is an absolute masterclass in organic growth
 
 -> 22M Views
 -> 154K Followers
 
-In 5 F*CKING days and its all made using ai
+In 5 F*CKING days and it's all made with ai
 
-if you want videos like this for ur brand / app (First link in comments)`,
+want videos like this for your brand? (First link in comments)`,
       links: [],
     },
   },

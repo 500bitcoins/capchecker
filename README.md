@@ -4,7 +4,7 @@ A Chrome extension that stamps hype and scam posts on X with a **CAP** score, a 
 
 Fake trading wins, "my AI built an app while I slept" threads, "drop the PDF below" follower farming and undisclosed referral links all follow the same patterns. CapChecker spots them while you scroll and stamps the post. Click the stamp to see why.
 
-![CapChecker stamps on an X timeline](docs/stamps.png)
+![CapChecker stamps hype posts on X](store/marquee.png)
 
 ## Install (about 2 minutes)
 
