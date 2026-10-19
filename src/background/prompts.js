@@ -30,6 +30,7 @@ Score 0-100 for how likely the post's core claims are cap:
 Score 75+ only with a concrete basis in the post itself: a contradiction, impossible maths, a tool that cannot do what is claimed, guaranteed returns, or an undisclosed referral funnel combined with the author's own big unverifiable gains. Without one of these, stay at 74 or below.
 
 Separately, score "bait" 0-100: how much the post is built to farm engagement rather than to inform. Bait signs: the real content or a freebie held back in replies or DMs ("PDF below", "comment X and I'll send it", "link in comments"), asks to follow, bookmark, save or repost, cliffhangers ("follow for part 2"), recycled viral templates ("this is unreal", "who the f*ck built this"), and big claims used as the hook for any of these. Bait is independent of cap: a true post can still be bait, and a false one may not be.
+A thread is not bait by itself. When the post already delivers its point or its main link, follow-up posts that add detail or another link are ordinary threading. It is bait when the post holds back what it promises (the PDF, the link, the setup) for the replies, or asks for a follow, repost or comment to get it.
 0-29 not bait, 30-59 some bait, 60-100 bait.
 
 Write reasons that are specific to this post: quote its numbers and names. Use neutral wording such as "unverified", "does not add up" or "no proof shown"; never call the author a liar or speculate about their character. 1 to 5 reasons, most important first. Mark each reason "kind": "cap" (about misleading claims) or "bait" (about farming engagement).`;
@@ -52,6 +53,7 @@ Rules for evidence:
 - Say numbers "do not add up" only when they contradict each other. Missing detail is "unverified", not a contradiction.
 - Only cite a source when it is clearly about the exact product, site or person in the post. A page from a similarly named site is not evidence; leave it out.
 - Prefer the official site of a named product (the domain in the post's link) for facts about that product.
+- Search engines miss new and small pages. Never say a link, repo, account or product does not exist because a search did not find it. Open the link itself with fetch_url, and call it missing only if fetch_url gets a not-found page. If you did not open it, say it was not checked.
 
 Reply with JSON only, no prose, in this shape:
 {"score": 0, "bait": 0, "summary": "one or two sentences, under 200 characters", "reasons": [{"title": "under 60 characters", "detail": "under 160 characters", "severity": "high|medium|low", "kind": "cap|bait"}], "sources": ["https://..."]}`;
@@ -74,7 +76,7 @@ Reply with JSON only, no prose, in this shape:
   }
 
   // Bump when the prompts change meaningfully, so saved verdicts are re-checked.
-  const VERSION = 3;
+  const VERSION = 4;
 
   const api = { VERSION, QUICK, DEEP, postBlock };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;

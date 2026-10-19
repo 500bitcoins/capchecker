@@ -77,8 +77,20 @@
     aiBot: /\b(?:bots?|ai|agents?|grok|claude|opus|gpt|chatgpt|gemini|copy[-\s]?trad\w*)\b/i,
     dollar: /\$\s?\d/g,
     community: /t\.me\/\+|\bjoin\s+(?:my|our|the)\s+(?:telegram|discord|tg)\b|\bvip\s+(?:group|channel)\b/i,
-    injection:
-      /\bignore\s+(?:all\s+|any\s+)?(?:previous|prior|above|earlier)\s+(?:instructions|prompts?)\b|\byou\s+are\s+(?:an?\s+)?(?:ai|language\s+model|llm)\b|\bas\s+an\s+ai\b|\bcapchecker\b|\b(?:score|rate)\s+this\s+(?:post\s+)?(?:as\s+)?(?:0|zero|safe|legit|no\s+cap)\b|\bsystem\s+prompt\b/i,
+    // Instructions aimed at a checker or model. Merely naming CapChecker, AI or a
+    // system prompt is ordinary on an AI timeline, CapChecker's own launch post included.
+    injection: new RegExp(
+      [
+        String.raw`\b(?:ignore|disregard|forget)\s+(?:all\s+|any\s+|the\s+)?(?:previous|prior|above|earlier|your|these)\s+(?:instructions|prompts?|rules|guidelines)\b`,
+        String.raw`\b(?:if|when)\s+you(?:'re|\s+are)\s+(?:an?\s+)?(?:ai|llm|language\s+model|bot|chatbot)\b`,
+        String.raw`\b(?:to\s+)?(?:any|all|every)\s+(?:ais?|llms?|bots?|models?|(?:ai\s+|fact[\s-]?)?checkers?)\s+(?:reading|checking|scanning|analy[sz]ing|reviewing)\s+this\b`,
+        String.raw`\b(?:dear|hey|attention|note\s+(?:to|for))\s+(?:ais?|llms?|language\s+models?|ai\s+(?:checkers?|models?|agents?|bots?)|fact[\s-]?checkers?|capchecker)\b`,
+        String.raw`\bcapchecker\s*[:,]\s*(?:please\s+)?(?:ignore|rate|score|mark|label|stamp|treat|say|output|return|this\s+(?:post\s+)?is)\b`,
+        String.raw`\b(?:score|rate|mark|label|classify|stamp|treat|flag)\s+this\s+(?:post\s+|tweet\s+)?(?:as\s+)?(?:0|zero|safe|legit(?:imate)?|real|true|trustworthy|verified|no\s+cap|not\s+cap)\b`,
+        String.raw`\b(?:new|updated?|override|overriding)\s+system\s+prompt\b`,
+      ].join('|'),
+      'i'
+    ),
   };
 
   const WEIGHT = {

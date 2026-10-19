@@ -16,7 +16,12 @@ const CACHE_MAX = 3000;
 const QUICK_MAX_TOKENS = 1000;
 const DEEP_MAX_TOKENS = 4000;
 const DEEP_TOOL_ROUNDS = 3;
-const DEEP_SEARCH_ESTIMATE = 8;
+// What a deep check is expected to cost, for the daily cap. Real ones cost 4-9.5 credits
+// (2026-10-19 logs); reserving the theoretical maximum (all 4,000 output tokens and 8 searches,
+// about 15-18 credits) refused deep checks that would have fitted. A check that runs long can
+// overshoot the cap by a few credits; the next one is then refused.
+const DEEP_OUTPUT_ESTIMATE = 1500;
+const DEEP_SEARCH_ESTIMATE = 4;
 const WEB_SEARCH_PRICE = 0.85;
 const QUICK_CONCURRENCY = 2;
 
@@ -33,7 +38,11 @@ async function apiKey() {
   return (apiKey || '').trim();
 }
 
-const today = () => new Date().toISOString().slice(0, 10);
+// The day the cap counts against, in the user's own time zone.
+function today() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
 
 async function usage() {
   const { usage } = await local.get('usage');
@@ -59,15 +68,19 @@ function updateUsage(fn) {
 let reserved = 0;
 
 class BudgetError extends Error {
-  constructor(used, cap) {
-    super(`Daily cap reached (${used.toFixed(2)} of ${cap} credits)`);
+  constructor(used, cap, need) {
+    super(
+      used >= cap || need < 1
+        ? `Daily cap reached (${used.toFixed(2)} of ${cap} credits). It resets at midnight, or raise it in CapChecker settings.`
+        : `This check needs about ${Math.ceil(need)} credits and today's cap has ${Math.max(0, cap - used).toFixed(1)} left. Raise the daily cap in CapChecker settings, or try again after midnight.`
+    );
     this.code = 'budget';
   }
 }
 
 async function reserve(estimate) {
   const [u, s] = await Promise.all([usage(), getSettings()]);
-  if (u.credits + reserved + estimate > s.dailyCap) throw new BudgetError(u.credits + reserved, s.dailyCap);
+  if (u.credits + reserved + estimate > s.dailyCap) throw new BudgetError(u.credits + reserved, s.dailyCap, estimate);
   reserved += estimate;
   let released = false;
   return () => {
@@ -268,7 +281,7 @@ async function deepCheck(post, heuristic) {
     const user = self.CapPrompts.postBlock(post, heuristic, extra);
     const tools = s.deepWebSearch ? ['web_search', 'fetch_url', 'calc', 'now'] : ['calc', 'now'];
     const est =
-      estimate(price, self.CapPrompts.DEEP.length + user.length + 6000, DEEP_MAX_TOKENS, 3) +
+      estimate(price, self.CapPrompts.DEEP.length + user.length + 6000, DEEP_OUTPUT_ESTIMATE, DEEP_TOOL_ROUNDS) +
       (s.deepWebSearch ? DEEP_SEARCH_ESTIMATE * WEB_SEARCH_PRICE : 0);
     const releaseBudget = await reserve(est);
     try {
