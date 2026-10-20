@@ -1,6 +1,8 @@
 // Runs CapChecker's real checks on one X post from the command line, through
 // the extension's own service worker. Needs DARKWOODS_API_KEY.
-//   node scripts/check-post.mjs https://x.com/user/status/123 [--deep]
+//   node scripts/check-post.mjs https://x.com/user/status/123 [--deep] [--cut]
+// --cut hands the service worker only the first 280 characters, flagged as cut off at
+// "Show more", the way long posts look on the timeline.
 import { chromium } from 'playwright';
 import fs from 'node:fs';
 import os from 'node:os';
@@ -11,6 +13,7 @@ import { chromiumPath } from '../test/e2e/browser.mjs';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const url = process.argv.find((a) => /\/status\/\d+/.test(a));
 const deep = process.argv.includes('--deep');
+const cut = process.argv.includes('--cut');
 if (!url || !process.env.DARKWOODS_API_KEY) {
   console.error('usage: DARKWOODS_API_KEY=dwk_... node scripts/check-post.mjs <x.com status url> [--deep]');
   process.exit(1);
@@ -25,7 +28,8 @@ const post = {
   id,
   handle,
   url: `https://x.com/${handle}/status/${id}`,
-  text: t.text,
+  text: cut ? String(t.text).slice(0, 280) : t.text,
+  truncated: cut && String(t.text).length > 280,
   quoteText: t.quote ? t.quote.text : '',
   articleTitle: t.article ? t.article.title : '',
   cardText: '',

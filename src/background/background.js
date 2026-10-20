@@ -174,6 +174,7 @@ async function quickCheck(post, heuristic) {
   const key = await apiKey();
   if (!key) throw Object.assign(new Error('Add your Darkwoods API key in CapChecker settings'), { code: 'no_key' });
   const s = await getSettings();
+  if (s.useFxtwitter) post = await fullPost(post);
   const price = await DW.price(s.quickModel);
   const user = self.CapPrompts.postBlock(post, heuristic);
   const releaseBudget = await reserve(estimate(price, self.CapPrompts.QUICK.length + user.length, QUICK_MAX_TOKENS));
@@ -245,6 +246,23 @@ function articleOf(a, max) {
   };
 }
 
+// The timeline only shows long posts up to "Show more". Before a quick check, fetch the
+// rest so the model judges the whole post rather than the cut-off part.
+async function fullPost(post) {
+  if (!post.truncated && !post.quoteTruncated) return post;
+  const status = await fxJson(`https://api.fxtwitter.com/${encodeURIComponent(post.handle || 'i')}/status/${post.id}`);
+  const t = status && status.tweet;
+  if (!t) return post;
+  const quote = t.quote && t.quote.text;
+  return {
+    ...post,
+    text: t.text || post.text,
+    truncated: post.truncated && !t.text,
+    quoteText: quote || post.quoteText,
+    quoteTruncated: post.quoteTruncated && !quote,
+  };
+}
+
 async function enrich(post) {
   const [status, thread] = await Promise.all([
     fxJson(`https://api.fxtwitter.com/${encodeURIComponent(post.handle || 'i')}/status/${post.id}`),
@@ -297,6 +315,11 @@ async function deepCheck(post, heuristic) {
   hold();
   try {
     const extra = s.useFxtwitter ? await enrich(post) : {};
+    // The full text replaces the timeline's copy, which stops at "Show more" on long posts.
+    if (extra.full_text) post = { ...post, text: extra.full_text, truncated: false };
+    if (extra.quoted_full_text) post = { ...post, quoteText: extra.quoted_full_text, quoteTruncated: false };
+    delete extra.full_text;
+    delete extra.quoted_full_text;
     const user = self.CapPrompts.postBlock(post, heuristic, extra);
     const tools = s.deepWebSearch ? ['web_search', 'fetch_url', 'calc', 'now'] : ['calc', 'now'];
     const est =

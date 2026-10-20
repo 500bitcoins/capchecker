@@ -21,6 +21,15 @@
     return null;
   }
 
+  // X cuts long posts at a "Show more" link on the timeline; the rest is not on the page
+  // until it's clicked. The service worker fetches the full text for these.
+  const SHOW_MORE = '[data-testid="tweet-text-show-more-link"]';
+  function showMoreLinks(article) {
+    return [...article.querySelectorAll(`${SHOW_MORE}, button, [role="button"], a[href*="/status/"]`)].filter(
+      (el) => el.matches(SHOW_MORE) || /^show more$/i.test((el.textContent || '').trim())
+    );
+  }
+
   function extractPost(article) {
     const link = permalink(article);
     if (!link) return null;
@@ -56,6 +65,8 @@
         .join('\n')
     ).slice(0, 1500);
 
+    const more = showMoreLinks(article);
+
     const nameEl = article.querySelector('[data-testid="User-Name"]');
     const name = nameEl ? clean(nameEl.innerText).split('\n')[0] : '';
 
@@ -66,6 +77,8 @@
       name,
       text: main ? clean(main.innerText).slice(0, 4000) : '',
       quoteText: quoted ? clean(quoted.innerText).slice(0, 1500) : '',
+      truncated: more.some((el) => !quote || !quote.contains(el)),
+      quoteTruncated: !!quote && more.some((el) => quote.contains(el)),
       articleTitle,
       cardText,
       links: links.slice(0, 12),

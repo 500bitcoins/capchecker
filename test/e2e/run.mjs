@@ -90,6 +90,24 @@ try {
   await page.keyboard.press('Escape');
   log('pattern panel ok, clicks stay inside the extension');
 
+  // Long posts stop at X's "Show more" link on the timeline; the extractor flags them so the
+  // full text is fetched before an AI check. Runs the extractor in the page itself.
+  await page.addScriptTag({ path: path.join(root, 'src/content/extract.js') });
+  const cutOff = await page.evaluate(() => {
+    const original = document.querySelector('article:has([href="/markets_desk"])');
+    const clone = original.cloneNode(true);
+    const more = document.createElement('button');
+    more.setAttribute('data-testid', 'tweet-text-show-more-link');
+    more.textContent = 'Show more';
+    clone.querySelector('[data-testid="tweetText"]').after(more);
+    document.body.append(clone);
+    const r = [globalThis.CapExtract.extractPost(original).truncated, globalThis.CapExtract.extractPost(clone).truncated];
+    clone.remove();
+    return r;
+  });
+  assert.deepEqual(cutOff, [false, true], 'Show more should mark a post as cut off');
+  log('cut-off posts detected');
+
   // ---------- 2. light theme ----------
   await page.goto('https://x.com/home?theme=light');
   await page.waitForFunction(() => document.querySelectorAll('.capchecker-host').length >= 9);
